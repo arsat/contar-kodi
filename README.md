@@ -1,4 +1,4 @@
-![CONTAR](https://www.cont.ar/favicon.ico)
+![CONTAR](https://www.cont.ar/favicon-96x96.png)
 
 # plugin.video.contar
 Contar add-on for Kodi.
