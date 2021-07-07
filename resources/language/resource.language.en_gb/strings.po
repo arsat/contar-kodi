@@ -1,6 +1,6 @@
 # Kodi Media Center language file
-# Addon Name: Cine.ar Play
-# Addon id: plugin.video.cinear
+# Addon Name: Contar
+# Addon id: plugin.video.contar
 # Addon Provider: ARSAT
 msgid ""
 msgstr ""
