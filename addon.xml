@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<addon id="plugin.video.contar"
+       name="Contar" version="0.0.1"
+       provider-name="ARSAT">
+    <requires>
+        <import addon="xbmc.python" version="3.0.0"/>
+        <import addon="script.module.requests" version="2.25.1"/>
+    </requires>
+    <extension point="xbmc.python.pluginsource" library="addon.py">
+        <provides>video</provides>
+    </extension>
+    <extension point="xbmc.addon.metadata">
+        <summary lang="es_AR">CONTAR</summary>
+        <description lang="es_AR">Contar es la plataforma OTT de video on line y televisión en vivo de la Secretaría de medios y comunicación pública donde podrás disfrutar de un amplio catálogo de contenidos originales de ficciones, documentales, musicales, deportivos y eventos en vivo. A su vez, te ofrecemos disfrutar de la programación en vivo de las señales educativas Encuentro, Paka Paka, DXTV, así como también de la Television Publica, CINEAR, Mirador TV y otras señales pertenecientes a la Televisión Digital Abierta. Ademas, podrás encontrar los contenidos producidos por el BACUA (Banco de contenidos universales argentinos) y eventos culturales realizados en el CCK (Centro Cultural Kirchner).</description>
+        <disclaimer lang="es_AR">Los contenidos audiovisuales de la plataforma CONT.AR pueden contener escenas no aptas para todo público. Se recomienda la supervisión de un mayor.
+El uso de CONT.AR y de este sitio web implica la aceptación de nuestros Términos de uso y de nuestra Política de privacidad.</disclaimer>
+        <language>es</language>
+        <platform>all</platform>
+        <license>GPL-3.0-only</license>
+        <source>https://github.com/arsat/contar-kodi</source>
+        <website>https://cont.ar/</website>
+        <email>cinear@arsat.com.ar</email>
+        <assets>
+            <icon>resources/icon.png</icon>
+            <fanart>resources/fanart.jpg</fanart>
+            <screenshot>resources/screenshot-01.jpg</screenshot>
+            <screenshot>resources/screenshot-02.jpg</screenshot>
+            <screenshot>resources/screenshot-03.jpg</screenshot>
+        </assets>
+        <news>Initial version</news>
+    </extension>
+</addon>

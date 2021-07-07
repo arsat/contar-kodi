@@ -30,14 +30,6 @@
                     <default/>
                     <enable>false</enable>
                 </setting>
-                <setting id="metadata" type="string" help="">
-                    <level>4</level>
-                    <constraints>
-                        <allowempty>true</allowempty>
-                    </constraints>
-                    <default/>
-                    <enable>false</enable>
-                </setting>
 			</group>
 		</category>
 	</section>
