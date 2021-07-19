@@ -24,12 +24,12 @@ msgid "Login"
 msgstr "Inicio de sesión"
 
 msgctxt "#30004"
-msgid "Terms and conditions"
-msgstr "Términos y condiciones"
+msgid "Live"
+msgstr "En vivo"
 
 msgctxt "#30005"
-msgid "The terms and coditions have changed. Please visit play.cine.ar to accept them."
-msgstr "Hay una nueva versión de los términos y condiciones. Visitá play.cine.ar para aceptarlos."
+msgid "Channels"
+msgstr "Canales"
 
 msgctxt "#30006"
 msgid "Enter PIN for "

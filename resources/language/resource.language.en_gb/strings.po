@@ -24,38 +24,18 @@ msgid "Login"
 msgstr ""
 
 msgctxt "#30004"
-msgid "Terms and conditions"
+msgid "Live"
 msgstr ""
 
 msgctxt "#30005"
-msgid "The terms and coditions have changed. Please visit play.cine.ar to accept them."
+msgid "Channels"
 msgstr ""
 
 msgctxt "#30006"
-msgid "Enter PIN for "
-msgstr ""
-
-msgctxt "#30007"
-msgid "Profile selection"
-msgstr ""
-
-msgctxt "#30008"
-msgid "Incorrect PIN."
-msgstr ""
-
-msgctxt "#30009"
-msgid "Home"
-msgstr ""
-
-msgctxt "#30010"
-msgid "Last seen"
-msgstr ""
-
-msgctxt "#30011"
 msgid "Explore"
 msgstr ""
 
-msgctxt "#30012"
+msgctxt "#30007"
 msgid "Mi sala"
 msgstr ""
 
