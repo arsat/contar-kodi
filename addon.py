@@ -24,8 +24,6 @@ addon_icon = addon.getAddonInfo('icon')
 addon_version = addon.getAddonInfo('version')
 art_path = os.path.join(addon.getAddonInfo('path'), 'resources', 'media')
 
-ID  = None  # received always via params
-
 
 def translation(id):
     return addon.getLocalizedString(id).encode('utf-8')
@@ -45,6 +43,7 @@ def init_session():
         addon.setSetting('token', data['token'])
         return True
     else:
+        addon.setSetting('token', '')
         xbmcgui.Dialog().ok(translation(30003), data['error'])
         return False
         
@@ -54,15 +53,17 @@ def authenticate():
     if addon.getSetting('token') != '':
         profile = json_request('user')
     if profile == None:
-        if not init_session(): return
+        if not init_session():
+            sys.exit(0)
         profile = json_request('user')
-    global ID
-    ID = profile['id']
+        if profile == None:
+            xbmcgui.Dialog().ok(translation(30003), 'Falló login (no debería suceder)')
+            sys.exit(0)
 
 
-def add_directory_item(name, query, image=None, isFolder=True, art=None, info=None):
+def add_directory_item(name, query, image=None, isFolder=True, art=None, info=None, endpoint=None):
     url = f'{addon_url}?action={query}'
-    url += f'&id={ID}' if ID else ''
+    if endpoint: url += f"&endpoint={endpoint}"
     list_item = xbmcgui.ListItem(label=name)
     if image:
         thumb = os.path.join(art_path, image)
@@ -72,11 +73,12 @@ def add_directory_item(name, query, image=None, isFolder=True, art=None, info=No
     xbmcplugin.addDirectoryItem(handle=addon_handle, url=url, listitem=list_item, isFolder=isFolder)
 
 
-
 def root_menu():
     authenticate()
+    xbmc.log(f"CONTAR - root_menu()", level=xbmc.LOGDEBUG)
     add_directory_item(translation(30004), 'live', 'live.png')
     add_directory_item(translation(30005), 'list_channels', 'channels.png')
+    add_directory_item(translation(30012), 'list_prods', 'my-list.png', endpoint="mylist")
     add_directory_item(translation(30013), 'search', 'search.png')
     add_directory_item(translation(30014), 'close_session', 'close-session.png', False)
     xbmcplugin.endOfDirectory(addon_handle)
@@ -95,27 +97,83 @@ def live(params):
              'fanart': item['cover']})
         list_item.setInfo('video', {'title': item['title']})
         list_item.setProperty('IsPlayable', 'true')
-        url = f"{addon_url}?action=play&id={ID}&source={item['hls']}"
+        url = f"{addon_url}?action=play&source={item['hls']}"
         xbmcplugin.addDirectoryItem(handle=addon_handle, url=url, listitem=list_item, isFolder=False)    
     xbmcplugin.endOfDirectory(addon_handle)
 
 
 def list_channels(params):
-    resp = json_request(f"channels/list")
+    resp = json_request("channel/list")
     for item in resp['data']:
-       list_item = xbmcgui.ListItem(label=item['name'])
-       list_item.setArt(
+        list_item = xbmcgui.ListItem(label=item['name'])
+        list_item.setArt(
             {'thumb': item['avatar'],
              'poster': item['logoImage'],
              'icon': item['logoImage'],
              'banner': item['tabletImage'],
              'fanart': item['tabletImage']})
-        url = f"{addon_url}?action=channel&id={ID}&source={item['id']}"
-        xbmcplugin.addDirectoryItem(handle=addon_handle, url=url, listitem=list_item)
+        url = f"{addon_url}?action=list_prods&endpoint=channel/series/{item['id']}"
+        xbmcplugin.addDirectoryItem(handle=addon_handle, url=url, listitem=list_item, isFolder=True)
+    xbmcplugin.endOfDirectory(addon_handle)
+    
+    
+def get_hls(streams):
+    for stream in streams:
+        if stream['type'] == 'HLS':
+            return stream['url']
+    return None
+
+
+def list_prods(params):
+    resp = json_request(params["endpoint"])
+    for item in resp['data']:
+        list_item = xbmcgui.ListItem(label=item['name'])
+        list_item.setArt(
+            {'thumb': item['seasonImage'],
+             'poster': item['seasonImage'],
+             'icon': item['seasonImage'],
+             'banner': item['wallImage'],
+             'fanart': item['smartImage']})
+        info = {
+            'title': item['name'],
+            'year': item['year'],
+            'plot': item['story']
+            }
+        q = item["totalSeasons"] * item["totalEpisodes"]
+        if q > 1:
+            url = f"{addon_url}?action=list_epis&endpoint=serie/{item['uuid']}"
+            xbmcplugin.addDirectoryItem(handle=addon_handle, url=url, listitem=list_item, isFolder=True)    
+        else:
+            r2 = json_request(f"serie/{item['uuid']}")
+            if hls := get_hls(r2['data']['vuuid']['data']['streams']):
+                list_item.setInfo('video', info)
+                list_item.setProperty('IsPlayable', 'true')
+                url = f"{addon_url}?action=play&source={hls}"
+                xbmcplugin.addDirectoryItem(handle=addon_handle, url=url, listitem=list_item, isFolder=False)    
     xbmcplugin.endOfDirectory(addon_handle)
 
-def channel(params):
-    pass
+
+def list_epis(params):
+    resp = json_request(params["endpoint"])
+    for season in resp['data']['seasons']['data']:
+        for item in season['videos']['data']:
+            list_item = xbmcgui.ListItem(label=item['name'])
+            list_item.setArt(
+                {'thumb': item['posterImage'],
+                 'poster': item['posterImage'],
+                 'icon': item['posterImage'],
+                 'fanart': season['seasonImage']})
+            info = {
+                'title': item['name'],
+                'plot': item['synopsis']
+                }
+            if hls := get_hls(item['streams']):
+                list_item.setInfo('video', info)
+                list_item.setProperty('IsPlayable', 'true')
+                url = f"{addon_url}?action=play&source={hls}"
+                xbmcplugin.addDirectoryItem(handle=addon_handle, url=url, listitem=list_item, isFolder=False)    
+    xbmcplugin.endOfDirectory(addon_handle)
+
 
 def close_session(params):
     addon.setSetting('token', '')
@@ -123,23 +181,15 @@ def close_session(params):
 
 
 def search(params):
-    # search by title, director, actor...
-    texto = xbmcgui.Dialog().input(translation(30027))
-    if texto == '': return
-    params['url'] = 'search/' + quote(texto)
+    query = xbmcgui.Dialog().input(translation(30027))
+    if query == '': return
+    params['endpoint'] = f'search/videos?query={quote(query)}'
     list_prods(params)
 
 
 def play(params):
-    # token = addon.getSetting('token')
     play_item = xbmcgui.ListItem(path=params['source'])
     xbmcplugin.setResolvedUrl(addon_handle, True, listitem=play_item)
-
-
-def make_url(path, data=None):
-    url = f"{API_URL}/{path}"
-    if data: url += f"?{urlencode(data)}"
-    return url
 
 
 def decode_json(response):
@@ -161,10 +211,12 @@ def show_error(title, status, message):
         pass
 
 
-def json_request(path, params=None):
+def json_request(path):
+    xbmc.log(f"CONTAR - json_request() path:{path}", level=xbmc.LOGDEBUG)
     token = addon.getSetting('token')
-    url = make_url(path, params)
+    url = f"{API_URL}/{path}"
     headers = {'Authorization': 'Bearer ' + token}
+    xbmc.log(f"CONTAR - json_request() URL:{url}", level=xbmc.LOGDEBUG)
     r = requests.get(url, headers=headers)
     retries = 5
 
@@ -197,7 +249,6 @@ def json_request(path, params=None):
 if __name__ == '__main__':
     params = dict(parse_qsl(sys.argv[2][1:]))
     if params:
-        ID = params['id']
         globals()[params['action']](params)
     else:
         root_menu()

@@ -56,8 +56,8 @@ msgid "Explore"
 msgstr "Explorar"
 
 msgctxt "#30012"
-msgid "Mi sala"
-msgstr "Mi sala"
+msgid "My list"
+msgstr "Mi lista"
 
 msgctxt "#30013"
 msgid "Search"
@@ -114,18 +114,6 @@ msgstr "Por favor volvé a ingresar."
 msgctxt "#30031"
 msgid "Next..."
 msgstr "Siguiente..."
-
-msgctxt "#30032"
-msgid "My rentals"
-msgstr "Mis alquileres"
-
-msgctxt "#30033"
-msgid "Premieres"
-msgstr "Estrenos"
-
-msgctxt "#30034"
-msgid "To rent a production, please do so from the webpage."
-msgstr "Para alquilar por favor hacelo desde la web."
 
 msgctxt "#30035"
 msgid "Movie unavailable. Please retry later."
